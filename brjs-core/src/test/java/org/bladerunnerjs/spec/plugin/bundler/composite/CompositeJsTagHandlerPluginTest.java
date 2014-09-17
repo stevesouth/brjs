@@ -99,9 +99,9 @@ public class CompositeJsTagHandlerPluginTest extends SpecTest
 			"thirdparty/br-bootstrap/bundle.js", 
 			"thirdparty/appLib/bundle.js", 
 			"common-js/module/appns/node/Class.js",
+			"aliasing/bundle.js",
 			"namespaced-js/package-definitions.js", 
-			"namespaced-js/module/appns/namespaced/Class.js",
-			"aliasing/bundle.js"); 
+			"namespaced-js/module/appns/namespaced/Class.js"); 
 	}
 	
 	@Test
@@ -130,8 +130,6 @@ public class CompositeJsTagHandlerPluginTest extends SpecTest
 	// Workbench
 	@Test
 	public void seperateScriptTagsAreGeneratedInTheCorrectOrderForWorkbenches() throws Exception {
-		given(exceptions).arentCaught();
-		
 		given(aspect).hasNamespacedJsPackageStyle()
 			.and(aspect).hasClasses("appns.Class1")
 			.and(thirdpartyLib).containsFileWithContents("thirdparty-lib.manifest", "js: file1.js \n"+"exports: thirdpartylib")
@@ -145,9 +143,9 @@ public class CompositeJsTagHandlerPluginTest extends SpecTest
 		when(workbench).pageLoaded(pageResponse, "en_GB");
 		then(pageResponse).containsOrderedTextFragments(
 				"<script type='text/javascript' src='v/dev/thirdparty/thirdpartyLib/bundle.js'></script>", 
+				"<script type='text/javascript' src='v/dev/aliasing/bundle.js'></script>",
 				"<script type='text/javascript' src='v/dev/namespaced-js/package-definitions.js'></script>",
 				"<script type='text/javascript' src='v/dev/namespaced-js/module/appns/bs/b1/Class1.js'></script>",
-				"<script type='text/javascript' src='v/dev/aliasing/bundle.js'></script>",
 				"appns.bs.b1.Class1",
 				"appns.Class1");
 	}

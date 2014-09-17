@@ -15,7 +15,7 @@ import org.bladerunnerjs.plugin.CharResponseContent;
 import org.bladerunnerjs.plugin.ResponseContent;
 import org.bladerunnerjs.plugin.Locale;
 import org.bladerunnerjs.plugin.base.AbstractContentPlugin;
-import org.bladerunnerjs.plugin.plugins.bundlers.namespacedjs.NamespacedJsContentPlugin;
+import org.bladerunnerjs.plugin.plugins.bundlers.commonjs.CommonJsContentPlugin;
 import org.bladerunnerjs.utility.ContentPathParser;
 import org.bladerunnerjs.utility.ContentPathParserBuilder;
 
@@ -48,7 +48,7 @@ public class AliasingContentPlugin extends AbstractContentPlugin {
 	
 	@Override
 	public List<String> getPluginsThatMustAppearBeforeThisPlugin() {
-		return Arrays.asList(NamespacedJsContentPlugin.class.getCanonicalName());
+		return Arrays.asList(CommonJsContentPlugin.class.getCanonicalName());
 	}
 	
 	@Override

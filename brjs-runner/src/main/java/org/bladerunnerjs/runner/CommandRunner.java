@@ -19,6 +19,7 @@ import org.bladerunnerjs.logger.LogLevel;
 import org.bladerunnerjs.model.BRJS;
 import org.bladerunnerjs.model.ThreadSafeStaticBRJSAccessor;
 import org.bladerunnerjs.model.engine.AbstractRootNode;
+import org.bladerunnerjs.model.events.NewInstallEvent;
 import org.bladerunnerjs.model.exception.ConfigException;
 import org.bladerunnerjs.model.exception.InvalidSdkDirectoryException;
 import org.bladerunnerjs.model.exception.command.CommandArgumentsException;
@@ -115,10 +116,11 @@ public class CommandRunner {
     				} else {
     					brjs.bladerunnerConf().setAllowAnonymousStats(true);
     				}
+    				brjs.bladerunnerConf().write();
 				} catch (NoSuchElementException ex) {
 					brjs.bladerunnerConf().setAllowAnonymousStats(false);
 				}
-				brjs.bladerunnerConf().write();
+				brjs.notifyObservers(new NewInstallEvent(), brjs);
 			}
 			scanner.close();
 			

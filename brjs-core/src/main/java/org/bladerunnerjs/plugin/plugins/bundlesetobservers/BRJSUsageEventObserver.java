@@ -14,6 +14,7 @@ import org.bladerunnerjs.model.engine.Node;
 import org.bladerunnerjs.model.events.BundleSetCreatedEvent;
 import org.bladerunnerjs.model.events.BundleSetCreationStartedEvent;
 import org.bladerunnerjs.model.events.CommandExecutedEvent;
+import org.bladerunnerjs.model.events.NewInstallEvent;
 import org.bladerunnerjs.model.exception.ConfigException;
 import org.bladerunnerjs.plugin.Event;
 import org.bladerunnerjs.plugin.EventObserver;
@@ -88,7 +89,37 @@ public class BRJSUsageEventObserver extends AbstractModelObserverPlugin implemen
 			{
 				throw new RuntimeException(e);
 			}
-		}
+        } else if (event instanceof NewInstallEvent) {        	
+        	String jsonBlob = UsageTrackingFirebasePayloadBuilder.newInstallPayload(brjs);
+        	
+        	HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/installs.json");
+        	try
+        	{
+        		firebasePost.setEntity( new StringEntity(jsonBlob) );
+        		DefaultHttpClient client = new DefaultHttpClient();
+        		client.execute(firebasePost);
+        	}
+        	catch (Exception e)
+        	{
+        		throw new RuntimeException(e);
+        	}
+    	} else if (event instanceof CommandExecutedEvent) {
+    		CommandExecutedEvent commandExecutedEvent = (CommandExecutedEvent) event;
+    		
+    		String jsonBlob = UsageTrackingFirebasePayloadBuilder.commandPayload(brjs, commandExecutedEvent.getCommand());
+    		
+    		HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/commands.json");
+    		try
+    		{
+    			firebasePost.setEntity( new StringEntity(jsonBlob) );
+    			DefaultHttpClient client = new DefaultHttpClient();
+    			client.execute(firebasePost);
+    		}
+    		catch (Exception e)
+    		{
+    			throw new RuntimeException(e);
+    		}
+    	}
 	}
 
 

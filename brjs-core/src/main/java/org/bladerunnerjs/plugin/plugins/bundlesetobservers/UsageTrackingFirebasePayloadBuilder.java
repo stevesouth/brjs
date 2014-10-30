@@ -57,4 +57,20 @@ public class UsageTrackingFirebasePayloadBuilder
 		return new Gson().toJson(jsonMap);
 	}
 
+	public static String newInstallPayload(BRJS brjs)
+	{
+		Map<String,Object> jsonMap = getBasicVersionInfo(brjs);
+		
+		jsonMap.put("os_arch", System.getProperty("os.name"));
+		jsonMap.put("os_name", System.getProperty("os.name"));
+		jsonMap.put("os_version", System.getProperty("os.version"));
+		jsonMap.put("java_vendor", System.getProperty("java.vendor"));
+		jsonMap.put("java_version", System.getProperty("java.version"));
+		
+//		long currentTimeMillis = System.currentTimeMillis();
+//		jsonMap.put("execution_duration", currentTimeMillis - bundlesetStartTime);
+		
+		return new Gson().toJson(jsonMap);
+	}
+
 }

@@ -24,7 +24,7 @@ import org.bladerunnerjs.plugin.base.AbstractPlugin;
 import org.eclipse.jetty.client.HttpClient;
 
 
-public class BRJSUsageEventObserver extends AbstractModelObserverPlugin implements EventObserver
+public class BRJSUsageFirebaseEventObserver extends AbstractModelObserverPlugin implements EventObserver
 {
 	
 	private BRJS brjs;
@@ -60,7 +60,7 @@ public class BRJSUsageEventObserver extends AbstractModelObserverPlugin implemen
 		} else if (event instanceof BundleSetCreatedEvent) {
 			BundleSetCreatedEvent bundleSetCreatedEvent = (BundleSetCreatedEvent) event;
 			
-			String jsonBlob = UsageTrackingFirebasePayloadBuilder.bundlesetPayload(lastCreationStartTime, bundleSetCreatedEvent.getBundleSet());
+			String jsonBlob = UsageTrackingRestPayloadBuilder.bundlesetPayload(lastCreationStartTime, bundleSetCreatedEvent.getBundleSet());
 			
 			HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/bundlesets.json");
 			try
@@ -76,7 +76,7 @@ public class BRJSUsageEventObserver extends AbstractModelObserverPlugin implemen
 		} else if (event instanceof CommandExecutedEvent) {
 			CommandExecutedEvent commandExecutedEvent = (CommandExecutedEvent) event;
 			
-			String jsonBlob = UsageTrackingFirebasePayloadBuilder.commandPayload(brjs, commandExecutedEvent.getCommand());
+			String jsonBlob = UsageTrackingRestPayloadBuilder.commandPayload(brjs, commandExecutedEvent.getCommand());
 			
 			HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/commands.json");
 			try
@@ -90,7 +90,7 @@ public class BRJSUsageEventObserver extends AbstractModelObserverPlugin implemen
 				throw new RuntimeException(e);
 			}
         } else if (event instanceof NewInstallEvent) {        	
-        	String jsonBlob = UsageTrackingFirebasePayloadBuilder.newInstallPayload(brjs);
+        	String jsonBlob = UsageTrackingRestPayloadBuilder.newInstallPayload(brjs);
         	
         	HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/installs.json");
         	try
@@ -106,7 +106,7 @@ public class BRJSUsageEventObserver extends AbstractModelObserverPlugin implemen
     	} else if (event instanceof CommandExecutedEvent) {
     		CommandExecutedEvent commandExecutedEvent = (CommandExecutedEvent) event;
     		
-    		String jsonBlob = UsageTrackingFirebasePayloadBuilder.commandPayload(brjs, commandExecutedEvent.getCommand());
+    		String jsonBlob = UsageTrackingRestPayloadBuilder.commandPayload(brjs, commandExecutedEvent.getCommand());
     		
     		HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/commands.json");
     		try

@@ -12,7 +12,7 @@ import org.bladerunnerjs.model.JsLib;
 import com.google.gson.Gson;
 
 
-public class UsageTrackingFirebasePayloadBuilder
+public class UsageTrackingRestPayloadBuilder
 {
 
 	//TODO: calcuate toolkit version if we're using CT

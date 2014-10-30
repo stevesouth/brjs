@@ -9,6 +9,8 @@ import org.bladerunnerjs.aliasing.AliasDefinition;
 import org.bladerunnerjs.plugin.AssetPlugin;
 import org.bladerunnerjs.plugin.BundlesetObserverPlugin;
 
+import com.sun.glass.events.mac.NpapiEvent;
+
 public class StandardBundleSet implements BundleSet {
 	private final List<SourceModule> sourceModules;
 	private final List<AliasDefinition> activeAliases;
@@ -20,6 +22,7 @@ public class StandardBundleSet implements BundleSet {
 		this.sourceModules = sourceModules;
 		this.activeAliases = activeAliases;
 		this.resourceLocations = resources;
+		notifyBundlesetObservers();
 	}
 	
 	@Override
@@ -59,6 +62,20 @@ public class StandardBundleSet implements BundleSet {
 		
 		for(AssetLocation resourceNode : resourceLocations) {
 			resourceFiles.addAll(resourceNode.bundlableAssets(assetProducer));
+		}
+		
+		List<Asset> result = new ArrayList<Asset>();
+		result.addAll(resourceFiles);
+		
+		return result;
+	}
+	
+	@Override
+	public List<Asset> getResourceFiles() {
+		Set<Asset> resourceFiles = new LinkedHashSet<Asset>();
+		
+		for(AssetLocation resourceNode : resourceLocations) {
+			resourceFiles.addAll(resourceNode.bundlableAssets());
 		}
 		
 		List<Asset> result = new ArrayList<Asset>();

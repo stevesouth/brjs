@@ -1,2 +1,3 @@
 org.bladerunnerjs.plugin.plugins.jsdoc.JsDocObserver
 org.bladerunnerjs.plugin.plugins.appdeployer.AppDeploymentObserverPlugin
+org.bladerunnerjs.plugin.plugins.bundlesetobservers.BRJSUsageBundlesetObserver

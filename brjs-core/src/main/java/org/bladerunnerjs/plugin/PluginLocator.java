@@ -15,5 +15,4 @@ public interface PluginLocator
 	List<AssetPlugin> getAssetPlugins();
 	List<AssetLocationPlugin> getAssetLocationPlugins();
 	List<MinifierPlugin> getMinifierPlugins();
-	List<BundlesetObserverPlugin> getBundlesetObserverPlugins();
 }

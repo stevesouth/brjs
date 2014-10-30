@@ -10,12 +10,18 @@ import org.bladerunnerjs.model.Asset;
 import org.bladerunnerjs.model.BRJS;
 import org.bladerunnerjs.model.BundlableNode;
 import org.bladerunnerjs.model.BundleSet;
-import org.bladerunnerjs.plugin.BundlesetObserverPlugin;
+import org.bladerunnerjs.model.engine.Node;
+import org.bladerunnerjs.model.events.BundleSetCreatedEvent;
+import org.bladerunnerjs.model.events.BundleSetCreationStartedEvent;
+import org.bladerunnerjs.plugin.Event;
+import org.bladerunnerjs.plugin.EventObserver;
+import org.bladerunnerjs.plugin.ModelObserverPlugin;
+import org.bladerunnerjs.plugin.base.AbstractModelObserverPlugin;
 import org.bladerunnerjs.plugin.base.AbstractPlugin;
 import org.eclipse.jetty.client.HttpClient;
 
 
-public class BRJSUsageBundlesetObserver extends AbstractPlugin implements BundlesetObserverPlugin
+public class BRJSUsageBundlesetObserver extends AbstractModelObserverPlugin implements EventObserver
 {
 	
 	private BRJS brjs;
@@ -25,32 +31,34 @@ public class BRJSUsageBundlesetObserver extends AbstractPlugin implements Bundle
 	public void setBRJS(BRJS brjs)
 	{
 		this.brjs = brjs;
+		brjs.addObserver(this);
 		lastCreationStartTime = 0;
 	}
-
-	@Override
-	public void onBundlesetCreationStarted(BundlableNode bundlableNode)
-	{
-		lastCreationStartTime = System.currentTimeMillis();
-	}
+	
 	
 	@Override
-	public void onBundlesetCreated(BundleSet bundleset)
+	public void onEventEmitted(Event event, Node node)
 	{
-		String jsonBlob = UsageTrackingFirebasePayloadBuilder.bundlesetPayload(lastCreationStartTime, bundleset);
-		
-		HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/bundlesets.json");
-		try
-		{
-			firebasePost.setEntity( new StringEntity(jsonBlob) );
-			DefaultHttpClient client = new DefaultHttpClient();
-			client.execute(firebasePost);
+		if (event instanceof BundleSetCreationStartedEvent) {
+			lastCreationStartTime = System.currentTimeMillis();
+		} else if (event instanceof BundleSetCreatedEvent) {
+			BundleSetCreatedEvent bundleSetCreatedEvent = (BundleSetCreatedEvent) event;
+			
+			String jsonBlob = UsageTrackingFirebasePayloadBuilder.bundlesetPayload(lastCreationStartTime, bundleSetCreatedEvent.getBundleSet());
+			
+			HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/bundlesets.json");
+			try
+			{
+				firebasePost.setEntity( new StringEntity(jsonBlob) );
+				DefaultHttpClient client = new DefaultHttpClient();
+				client.execute(firebasePost);
+			}
+			catch (Exception e)
+			{
+				throw new RuntimeException(e);
+			}
 		}
-		catch (Exception e)
-		{
-			throw new RuntimeException(e);
-		}
-		
 	}
+
 
 }

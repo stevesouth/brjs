@@ -7,8 +7,6 @@ import java.util.Set;
 
 import org.bladerunnerjs.aliasing.AliasDefinition;
 import org.bladerunnerjs.plugin.AssetPlugin;
-import org.bladerunnerjs.plugin.BundlesetObserverPlugin;
-
 import com.sun.glass.events.mac.NpapiEvent;
 
 public class StandardBundleSet implements BundleSet {

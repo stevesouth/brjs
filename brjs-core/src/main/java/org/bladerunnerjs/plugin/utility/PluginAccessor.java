@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.bladerunnerjs.model.BRJS;
 import org.bladerunnerjs.plugin.AssetLocationPlugin;
 import org.bladerunnerjs.plugin.AssetPlugin;
-import org.bladerunnerjs.plugin.BundlesetObserverPlugin;
 import org.bladerunnerjs.plugin.CommandPlugin;
 import org.bladerunnerjs.plugin.ContentPlugin;
 import org.bladerunnerjs.plugin.MinifierPlugin;
@@ -28,7 +27,6 @@ public class PluginAccessor {
 	private final List<ModelObserverPlugin> modelObserverPlugins;
 	private final List<AssetPlugin> assetPlugins;
 	private final List<AssetLocationPlugin> assetLocationPlugins;
-	private final List<BundlesetObserverPlugin> bundlesetObserverPlugins;
 	
 	public PluginAccessor(BRJS brjs, PluginLocator pluginLocator) {
 		commandList = new CommandList(brjs, pluginLocator.getCommandPlugins());
@@ -38,7 +36,6 @@ public class PluginAccessor {
 		modelObserverPlugins = pluginLocator.getModelObserverPlugins();
 		assetPlugins = sort(pluginLocator.getAssetPlugins());
 		assetLocationPlugins = sort(pluginLocator.getAssetLocationPlugins());
-		bundlesetObserverPlugins = pluginLocator.getBundlesetObserverPlugins();
 	}
 	
 	public List<Plugin> allPlugins() {
@@ -90,10 +87,6 @@ public class PluginAccessor {
 			}
 		}
 		return null;
-	}
-	
-	public List<BundlesetObserverPlugin> bundlesetObserverPlugins() {
-		return bundlesetObserverPlugins;
 	}
 	
 	public List<ContentPlugin> contentPlugins() {

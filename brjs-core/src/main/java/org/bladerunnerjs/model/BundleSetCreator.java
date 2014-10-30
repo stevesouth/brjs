@@ -6,8 +6,9 @@ import java.util.List;
 
 import org.bladerunnerjs.logging.Logger;
 import org.bladerunnerjs.model.engine.NamedNode;
+import org.bladerunnerjs.model.events.BundleSetCreatedEvent;
+import org.bladerunnerjs.model.events.BundleSetCreationStartedEvent;
 import org.bladerunnerjs.model.exception.ModelOperationException;
-import org.bladerunnerjs.plugin.BundlesetObserverPlugin;
 import org.bladerunnerjs.utility.BundleSetBuilder;
 import org.bladerunnerjs.utility.RelativePathUtility;
 
@@ -24,9 +25,7 @@ public class BundleSetCreator {
 	}
 	
 	public static BundleSet createBundleSet(BundlableNode bundlableNode) throws ModelOperationException {
-		for (BundlesetObserverPlugin plugin : bundlableNode.root().plugins().bundlesetObserverPlugins()) {
-			plugin.onBundlesetCreationStarted(bundlableNode);
-		}
+		bundlableNode.notifyObservers(new BundleSetCreationStartedEvent(bundlableNode), bundlableNode);
 		
 		Logger logger = bundlableNode.root().logger(BundleSetCreator.class);
 		
@@ -46,9 +45,7 @@ public class BundleSetCreator {
 		bundleSetBuilder.addSeedFiles(seedFiles);
 		
 		BundleSet bundleSet = bundleSetBuilder.createBundleSet();
-		for (BundlesetObserverPlugin plugin : bundlableNode.root().plugins().bundlesetObserverPlugins()) {
-			plugin.onBundlesetCreated(bundleSet);
-		}
+		bundlableNode.notifyObservers(new BundleSetCreatedEvent(bundleSet), bundlableNode);
 		return bundleSet;
 	}
 	

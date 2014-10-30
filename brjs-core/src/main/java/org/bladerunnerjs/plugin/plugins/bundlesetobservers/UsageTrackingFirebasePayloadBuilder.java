@@ -41,6 +41,7 @@ public class UsageTrackingFirebasePayloadBuilder
 		
 		long currentTimeMillis = System.currentTimeMillis();
 		jsonMap.put("execution_duration", currentTimeMillis - bundlesetStartTime);
+		jsonMap.put("bundlable_node_type", bundleset.getBundlableNode().getClass().getSimpleName());
 		
 		return new Gson().toJson(jsonMap);
 	}

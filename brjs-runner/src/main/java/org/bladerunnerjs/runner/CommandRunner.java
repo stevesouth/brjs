@@ -7,6 +7,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 import javax.naming.InvalidNameException;
 
@@ -17,6 +19,7 @@ import org.bladerunnerjs.logger.LogLevel;
 import org.bladerunnerjs.model.BRJS;
 import org.bladerunnerjs.model.ThreadSafeStaticBRJSAccessor;
 import org.bladerunnerjs.model.engine.AbstractRootNode;
+import org.bladerunnerjs.model.exception.ConfigException;
 import org.bladerunnerjs.model.exception.InvalidSdkDirectoryException;
 import org.bladerunnerjs.model.exception.command.CommandArgumentsException;
 import org.bladerunnerjs.model.exception.command.CommandOperationException;
@@ -76,7 +79,7 @@ public class CommandRunner {
 		return byteStreamOutputStream.toString().trim();
 	}
 	
-	public int run(String[] args) throws CommandArgumentsException, CommandOperationException, InvalidNameException, ModelUpdateException {
+	public int run(String[] args) throws CommandArgumentsException, CommandOperationException, InvalidNameException, ModelUpdateException, ConfigException {
 		AbstractRootNode.allowInvalidRootDirectories = false;
 		BRJS brjs = null;
 		
@@ -99,6 +102,25 @@ public class CommandRunner {
 			}
 			
 			brjs.populate();
+			
+			Scanner scanner = new Scanner(System.in);
+			if (brjs.bladerunnerConf().getAllowAnonymousStats() == null) {
+				System.err.println(brjs.bladerunnerConf().getAllowAnonymousStats());
+				System.out.println("Can we collect anonymous status? (Y/n)");
+				try {
+					String userInput = scanner.next();
+
+    				if(userInput.equalsIgnoreCase("n") || userInput.equalsIgnoreCase("no")) {
+    					brjs.bladerunnerConf().setAllowAnonymousStats(false);
+    				} else {
+    					brjs.bladerunnerConf().setAllowAnonymousStats(true);
+    				}
+				} catch (NoSuchElementException ex) {
+					brjs.bladerunnerConf().setAllowAnonymousStats(false);
+				}
+				brjs.bladerunnerConf().write();
+			}
+			scanner.close();
 			
 			injectLegacyCommands(brjs);
 			return brjs.runUserCommand(new CommandConsoleLogLevelAccessor(getLoggerStore()), args);

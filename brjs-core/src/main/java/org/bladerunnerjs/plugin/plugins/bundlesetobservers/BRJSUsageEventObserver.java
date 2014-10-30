@@ -14,6 +14,7 @@ import org.bladerunnerjs.model.engine.Node;
 import org.bladerunnerjs.model.events.BundleSetCreatedEvent;
 import org.bladerunnerjs.model.events.BundleSetCreationStartedEvent;
 import org.bladerunnerjs.model.events.CommandExecutedEvent;
+import org.bladerunnerjs.model.exception.ConfigException;
 import org.bladerunnerjs.plugin.Event;
 import org.bladerunnerjs.plugin.EventObserver;
 import org.bladerunnerjs.plugin.ModelObserverPlugin;
@@ -40,6 +41,19 @@ public class BRJSUsageEventObserver extends AbstractModelObserverPlugin implemen
 	@Override
 	public void onEventEmitted(Event event, Node node)
 	{
+		if (node instanceof BRJS && node != null) {
+			try
+			{
+				if (!((BRJS) node).bladerunnerConf().getAllowAnonymousStats()) {
+					return;
+				}
+			}
+			catch (Exception e)
+			{
+				return; // assume we dont want to track
+			}
+		}
+		
 		if (event instanceof BundleSetCreationStartedEvent) {
 			lastCreationStartTime = System.currentTimeMillis();
 		} else if (event instanceof BundleSetCreatedEvent) {

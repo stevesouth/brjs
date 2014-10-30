@@ -8,6 +8,7 @@ import java.util.List;
 import org.bladerunnerjs.model.BRJS;
 import org.bladerunnerjs.plugin.AssetLocationPlugin;
 import org.bladerunnerjs.plugin.AssetPlugin;
+import org.bladerunnerjs.plugin.BundlesetObserverPlugin;
 import org.bladerunnerjs.plugin.CommandPlugin;
 import org.bladerunnerjs.plugin.ContentPlugin;
 import org.bladerunnerjs.plugin.MinifierPlugin;
@@ -28,6 +29,7 @@ public class MockPluginLocator implements PluginLocator
 	public List<TagHandlerPlugin> tagHandlers = new ArrayList<>();
 	public List<AssetPlugin> assetPlugins = new ArrayList<>();
 	public List<AssetLocationPlugin> assetLocationPlugins = new ArrayList<>();
+	public List<BundlesetObserverPlugin> bundlesetObserverPlugins = new ArrayList<>();
 	
 	public void createPlugins(BRJS brjs) {
 		setBRJSForPlugins(brjs, pluginCommands);
@@ -37,6 +39,7 @@ public class MockPluginLocator implements PluginLocator
 		setBRJSForPlugins(brjs, tagHandlers);
 		setBRJSForPlugins(brjs, assetPlugins);
 		setBRJSForPlugins(brjs, assetLocationPlugins);
+		setBRJSForPlugins(brjs, bundlesetObserverPlugins);
 	}
 	
 	@Override
@@ -87,5 +90,11 @@ public class MockPluginLocator implements PluginLocator
 		}
 		PluginLocatorUtils.setBRJSForPlugins(brjs, plugins);
 		return plugins;
+	}
+
+	@Override
+	public List<BundlesetObserverPlugin> getBundlesetObserverPlugins()
+	{
+		return bundlesetObserverPlugins;
 	}
 }

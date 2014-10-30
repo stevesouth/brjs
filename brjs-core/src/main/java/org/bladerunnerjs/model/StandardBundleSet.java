@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.bladerunnerjs.aliasing.AliasDefinition;
 import org.bladerunnerjs.plugin.AssetPlugin;
+import org.bladerunnerjs.plugin.BundlesetObserverPlugin;
 
 public class StandardBundleSet implements BundleSet {
 	private final List<SourceModule> sourceModules;
@@ -64,6 +65,14 @@ public class StandardBundleSet implements BundleSet {
 		result.addAll(resourceFiles);
 		
 		return result;
+	}
+
+	@Override
+	public void notifyBundlesetObservers()
+	{
+		for (BundlesetObserverPlugin plugin : bundlableNode.root().plugins().bundlesetObserverPlugins()) {
+			plugin.onBundlesetCreated(this);
+		}
 	}
 	
 }

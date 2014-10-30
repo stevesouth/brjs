@@ -40,4 +40,10 @@ public class JsTestDriverBundleSet implements BundleSet {
 	public List<Asset> getResourceFiles(AssetPlugin assetProducer) {
 		return bundleSet.getResourceFiles(assetProducer);
 	}
+
+	@Override
+	public void notifyBundlesetObservers()
+	{
+		bundleSet.notifyBundlesetObservers();
+	}
 }

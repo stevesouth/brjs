@@ -12,4 +12,5 @@ public interface BundleSet {
 	public List<AliasDefinition> getActiveAliases();
 	public List<AssetLocation> getResourceNodes();
 	public List<Asset> getResourceFiles(AssetPlugin assetProducer);
+	public void notifyBundlesetObservers();
 }

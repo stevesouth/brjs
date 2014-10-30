@@ -1,11 +1,18 @@
 package org.bladerunnerjs.plugin.plugins.bundlesetobservers;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.bladerunnerjs.model.Asset;
 import org.bladerunnerjs.model.BRJS;
 import org.bladerunnerjs.model.BundlableNode;
 import org.bladerunnerjs.model.BundleSet;
 import org.bladerunnerjs.plugin.BundlesetObserverPlugin;
 import org.bladerunnerjs.plugin.base.AbstractPlugin;
+import org.eclipse.jetty.client.HttpClient;
 
 
 public class BRJSUsageBundlesetObserver extends AbstractPlugin implements BundlesetObserverPlugin
@@ -30,7 +37,20 @@ public class BRJSUsageBundlesetObserver extends AbstractPlugin implements Bundle
 	@Override
 	public void onBundlesetCreated(BundleSet bundleset)
 	{
-		System.err.println( UsageTrackingFirebasePayloadBuilder.bundlesetPayload(lastCreationStartTime, bundleset) );
+		String jsonBlob = UsageTrackingFirebasePayloadBuilder.bundlesetPayload(lastCreationStartTime, bundleset);
+		
+		HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/bundlesets.json");
+		try
+		{
+			firebasePost.setEntity( new StringEntity(jsonBlob) );
+			DefaultHttpClient client = new DefaultHttpClient();
+			client.execute(firebasePost);
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+		
 	}
 
 }

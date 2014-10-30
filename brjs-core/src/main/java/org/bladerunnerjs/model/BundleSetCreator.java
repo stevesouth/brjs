@@ -7,6 +7,7 @@ import java.util.List;
 import org.bladerunnerjs.logging.Logger;
 import org.bladerunnerjs.model.engine.NamedNode;
 import org.bladerunnerjs.model.exception.ModelOperationException;
+import org.bladerunnerjs.plugin.BundlesetObserverPlugin;
 import org.bladerunnerjs.utility.BundleSetBuilder;
 import org.bladerunnerjs.utility.RelativePathUtility;
 
@@ -23,6 +24,10 @@ public class BundleSetCreator {
 	}
 	
 	public static BundleSet createBundleSet(BundlableNode bundlableNode) throws ModelOperationException {
+		for (BundlesetObserverPlugin plugin : bundlableNode.root().plugins().bundlesetObserverPlugins()) {
+			plugin.onBundlesetCreationStarted(bundlableNode);
+		}
+		
 		Logger logger = bundlableNode.root().logger(BundleSetCreator.class);
 		
 		BundleSetBuilder bundleSetBuilder = new BundleSetBuilder(bundlableNode);
@@ -40,7 +45,11 @@ public class BundleSetCreator {
 		
 		bundleSetBuilder.addSeedFiles(seedFiles);
 		
-		return bundleSetBuilder.createBundleSet();
+		BundleSet bundleSet = bundleSetBuilder.createBundleSet();
+		for (BundlesetObserverPlugin plugin : bundlableNode.root().plugins().bundlesetObserverPlugins()) {
+			plugin.onBundlesetCreated(bundleSet);
+		}
+		return bundleSet;
 	}
 	
 	private static String seedFilePaths(BundlableNode bundlableNode, List<? extends LinkedAsset> seedFiles) {

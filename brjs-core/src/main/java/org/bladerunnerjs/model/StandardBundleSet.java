@@ -22,7 +22,6 @@ public class StandardBundleSet implements BundleSet {
 		this.sourceModules = sourceModules;
 		this.activeAliases = activeAliases;
 		this.resourceLocations = resources;
-		notifyBundlesetObservers();
 	}
 	
 	@Override
@@ -82,14 +81,6 @@ public class StandardBundleSet implements BundleSet {
 		result.addAll(resourceFiles);
 		
 		return result;
-	}
-
-	@Override
-	public void notifyBundlesetObservers()
-	{
-		for (BundlesetObserverPlugin plugin : bundlableNode.root().plugins().bundlesetObserverPlugins()) {
-			plugin.onBundlesetCreated(this);
-		}
 	}
 	
 }

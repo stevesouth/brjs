@@ -13,5 +13,4 @@ public interface BundleSet {
 	public List<AssetLocation> getResourceNodes();
 	public List<Asset> getResourceFiles();
 	public List<Asset> getResourceFiles(AssetPlugin assetProducer);
-	public void notifyBundlesetObservers();
 }

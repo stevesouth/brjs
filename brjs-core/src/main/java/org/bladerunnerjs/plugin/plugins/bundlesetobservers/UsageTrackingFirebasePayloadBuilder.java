@@ -16,22 +16,24 @@ public class UsageTrackingFirebasePayloadBuilder
 {
 
 	//TODO: calcuate toolkit version if we're using CT
-	private static Map<String,Object> getBasicVersionInfo(App app) {
+	private static Map<String,Object> getBasicVersionInfo(BRJS brjs) {
 		Map<String,Object> versionInfo = new HashMap<>();
-		versionInfo.put("brjs_version", app.root().versionInfo().getVersionNumber());
-		versionInfo.put("toolkit_version", app.root().versionInfo().getVersionNumber());
+		versionInfo.put("brjs_version", brjs.versionInfo().getVersionNumber());
+		versionInfo.put("toolkit_version", brjs.root().versionInfo().getVersionNumber());
 		versionInfo.put("toolkit_name", "BladeRunnerJS");
-		for (JsLib lib : app.jsLibs()) {
+		for (JsLib lib : brjs.sdkLibs()) {
 			if (lib.getName().toLowerCase().startsWith("ct-")) {
 				versionInfo.put("toolkit_name", "CT");
+				break;
 			}
 		}
+		versionInfo.put("timestamp", System.currentTimeMillis());
 		return versionInfo;
 	}
 	
 	public static String bundlesetPayload(long bundlesetStartTime, BundleSet bundleset)
 	{
-		Map<String,Object> jsonMap = getBasicVersionInfo(bundleset.getBundlableNode().app());
+		Map<String,Object> jsonMap = getBasicVersionInfo(bundleset.getBundlableNode().root());
 		
 		Map<String,Object> fileCounts = new HashMap<>();
 		fileCounts.put("total_count", bundleset.getResourceFiles().size());
@@ -39,7 +41,18 @@ public class UsageTrackingFirebasePayloadBuilder
 		
 		long currentTimeMillis = System.currentTimeMillis();
 		jsonMap.put("execution_duration", currentTimeMillis - bundlesetStartTime);
-		jsonMap.put("timestamp", currentTimeMillis);
+		
+		return new Gson().toJson(jsonMap);
+	}
+
+	public static String commandPayload(BRJS brjs, String command)
+	{
+		Map<String,Object> jsonMap = getBasicVersionInfo(brjs);
+		
+		jsonMap.put("command_name", command);
+		
+//		long currentTimeMillis = System.currentTimeMillis();
+//		jsonMap.put("execution_duration", currentTimeMillis - bundlesetStartTime);
 		
 		return new Gson().toJson(jsonMap);
 	}

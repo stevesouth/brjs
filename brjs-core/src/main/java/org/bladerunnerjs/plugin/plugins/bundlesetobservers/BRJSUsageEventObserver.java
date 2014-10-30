@@ -13,6 +13,7 @@ import org.bladerunnerjs.model.BundleSet;
 import org.bladerunnerjs.model.engine.Node;
 import org.bladerunnerjs.model.events.BundleSetCreatedEvent;
 import org.bladerunnerjs.model.events.BundleSetCreationStartedEvent;
+import org.bladerunnerjs.model.events.CommandExecutedEvent;
 import org.bladerunnerjs.plugin.Event;
 import org.bladerunnerjs.plugin.EventObserver;
 import org.bladerunnerjs.plugin.ModelObserverPlugin;
@@ -21,7 +22,7 @@ import org.bladerunnerjs.plugin.base.AbstractPlugin;
 import org.eclipse.jetty.client.HttpClient;
 
 
-public class BRJSUsageBundlesetObserver extends AbstractModelObserverPlugin implements EventObserver
+public class BRJSUsageEventObserver extends AbstractModelObserverPlugin implements EventObserver
 {
 	
 	private BRJS brjs;
@@ -47,6 +48,22 @@ public class BRJSUsageBundlesetObserver extends AbstractModelObserverPlugin impl
 			String jsonBlob = UsageTrackingFirebasePayloadBuilder.bundlesetPayload(lastCreationStartTime, bundleSetCreatedEvent.getBundleSet());
 			
 			HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/bundlesets.json");
+			try
+			{
+				firebasePost.setEntity( new StringEntity(jsonBlob) );
+				DefaultHttpClient client = new DefaultHttpClient();
+				client.execute(firebasePost);
+			}
+			catch (Exception e)
+			{
+				throw new RuntimeException(e);
+			}
+		} else if (event instanceof CommandExecutedEvent) {
+			CommandExecutedEvent commandExecutedEvent = (CommandExecutedEvent) event;
+			
+			String jsonBlob = UsageTrackingFirebasePayloadBuilder.commandPayload(brjs, commandExecutedEvent.getCommand());
+			
+			HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/commands.json");
 			try
 			{
 				firebasePost.setEntity( new StringEntity(jsonBlob) );

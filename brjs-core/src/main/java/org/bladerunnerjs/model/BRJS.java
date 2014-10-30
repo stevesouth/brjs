@@ -15,6 +15,7 @@ import org.bladerunnerjs.logging.LoggerFactory;
 import org.bladerunnerjs.model.engine.Node;
 import org.bladerunnerjs.model.engine.NodeItem;
 import org.bladerunnerjs.model.engine.NodeList;
+import org.bladerunnerjs.model.events.CommandExecutedEvent;
 import org.bladerunnerjs.model.exception.ConfigException;
 import org.bladerunnerjs.model.exception.InvalidSdkDirectoryException;
 import org.bladerunnerjs.model.exception.command.CommandArgumentsException;
@@ -339,7 +340,7 @@ public class BRJS extends AbstractBRJSRootNode
 	
 	public int runCommand(String... args) throws NoSuchCommandException, CommandArgumentsException, CommandOperationException
 	{
-		return CommandRunner.run(commandList, args);
+		return CommandRunner.run(this, commandList, args);
 	}
 	
 	public int runUserCommand(LogLevelAccessor logLevelAccessor, String... args) throws CommandOperationException

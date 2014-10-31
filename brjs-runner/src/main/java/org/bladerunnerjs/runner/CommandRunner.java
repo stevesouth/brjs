@@ -106,8 +106,7 @@ public class CommandRunner {
 			
 			Scanner scanner = new Scanner(System.in);
 			if (brjs.bladerunnerConf().getAllowAnonymousStats() == null) {
-				System.err.println(brjs.bladerunnerConf().getAllowAnonymousStats());
-				System.out.println("Can we collect anonymous status? (Y/n)");
+				System.out.println("Can we collect anonymous stats? (Y/n)");
 				try {
 					String userInput = scanner.next();
 

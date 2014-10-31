@@ -55,59 +55,76 @@ public class BRJSUsageFirebaseEventObserver extends AbstractModelObserverPlugin 
 			}
 		}
 		
-		if (event instanceof BundleSetCreationStartedEvent) {
-			lastCreationStartTime = System.currentTimeMillis();
-		} else if (event instanceof BundleSetCreatedEvent) {
-			BundleSetCreatedEvent bundleSetCreatedEvent = (BundleSetCreatedEvent) event;
-			
-			String jsonBlob = UsageTrackingRestPayloadBuilder.bundlesetPayload(lastCreationStartTime, bundleSetCreatedEvent.getBundleSet());
-			
-			HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/bundlesets.json");
-			try
-			{
-				firebasePost.setEntity( new StringEntity(jsonBlob) );
-				DefaultHttpClient client = new DefaultHttpClient();
-				client.execute(firebasePost);
-			}
-			catch (Exception e)
-			{
-				brjs.logger(this.getClass()).error(e.toString());
-				throw new RuntimeException(e);
-			}
-		} else if (event instanceof CommandExecutedEvent) {
-			CommandExecutedEvent commandExecutedEvent = (CommandExecutedEvent) event;
-			
-			String jsonBlob = UsageTrackingRestPayloadBuilder.commandPayload(brjs, commandExecutedEvent.getCommand());
-			
-			HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/commands.json");
-			try
-			{
-				firebasePost.setEntity( new StringEntity(jsonBlob) );
-				DefaultHttpClient client = new DefaultHttpClient();
-				client.execute(firebasePost);
-			}
-			catch (Exception e)
-			{
-				brjs.logger(this.getClass()).error(e.toString());
-				throw new RuntimeException(e);
-			}
-        } else if (event instanceof NewInstallEvent) {        	
-        	String jsonBlob = UsageTrackingRestPayloadBuilder.newInstallPayload(brjs);
-        	
-        	HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/installs.json");
-        	try
-        	{
-        		firebasePost.setEntity( new StringEntity(jsonBlob) );
-        		DefaultHttpClient client = new DefaultHttpClient();
-        		client.execute(firebasePost);
-        	}
-        	catch (Exception e)
-        	{
-        		brjs.logger(this.getClass()).error(e.toString());
-        		throw new RuntimeException(e);
-        	}
-    	}
+		new Thread(new EventHandlerThread(event, node)).start();
 	}
 
+	
+	private class EventHandlerThread implements Runnable {
+
+		private Event event;
+
+		EventHandlerThread(Event event, Node node) {
+			this.event = event;
+		}
+		
+		@Override
+		public void run()
+		{
+			if (event instanceof BundleSetCreationStartedEvent) {
+				lastCreationStartTime = System.currentTimeMillis();
+			} else if (event instanceof BundleSetCreatedEvent) {
+				BundleSetCreatedEvent bundleSetCreatedEvent = (BundleSetCreatedEvent) event;
+				
+				String jsonBlob = UsageTrackingRestPayloadBuilder.bundlesetPayload(lastCreationStartTime, bundleSetCreatedEvent.getBundleSet());
+				
+				HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/bundlesets.json");
+				try
+				{
+					firebasePost.setEntity( new StringEntity(jsonBlob) );
+					DefaultHttpClient client = new DefaultHttpClient();
+					client.execute(firebasePost);
+				}
+				catch (Exception e)
+				{
+					brjs.logger(this.getClass()).error(e.toString());
+					throw new RuntimeException(e);
+				}
+			} else if (event instanceof CommandExecutedEvent) {
+				CommandExecutedEvent commandExecutedEvent = (CommandExecutedEvent) event;
+				
+				String jsonBlob = UsageTrackingRestPayloadBuilder.commandPayload(brjs, commandExecutedEvent.getCommand());
+				
+				HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/commands.json");
+				try
+				{
+					firebasePost.setEntity( new StringEntity(jsonBlob) );
+					DefaultHttpClient client = new DefaultHttpClient();
+					client.execute(firebasePost);
+				}
+				catch (Exception e)
+				{
+					brjs.logger(this.getClass()).error(e.toString());
+					throw new RuntimeException(e);
+				}
+	        } else if (event instanceof NewInstallEvent) {        	
+	        	String jsonBlob = UsageTrackingRestPayloadBuilder.newInstallPayload(brjs);
+	        	
+	        	HttpPost firebasePost = new HttpPost("https://brjs-usage-dashboard.firebaseio.com/installs.json");
+	        	try
+	        	{
+	        		firebasePost.setEntity( new StringEntity(jsonBlob) );
+	        		DefaultHttpClient client = new DefaultHttpClient();
+	        		client.execute(firebasePost);
+	        	}
+	        	catch (Exception e)
+	        	{
+	        		brjs.logger(this.getClass()).error(e.toString());
+	        		throw new RuntimeException(e);
+	        	}
+	    	}
+		}
+		
+	}
+	
 
 }

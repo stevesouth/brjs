@@ -56,6 +56,7 @@ dependencies {
 	compile dependency('utils')
 	compile dependency('jericho-html')
 	compile dependency('xalan')
+	compile "com.pusher:pusher-rest-java:0.9.0"
 	
 	/* woodstox deps */
 	compile dependency('woodstox-core-asl')

@@ -31,7 +31,7 @@ public class UsageTrackingRestPayloadBuilder
 		return versionInfo;
 	}
 	
-	public static String bundlesetPayload(long bundlesetStartTime, BundleSet bundleset)
+	public static Map<String,Object> bundlesetPayload(long bundlesetStartTime, BundleSet bundleset)
 	{
 		Map<String,Object> jsonMap = getBasicVersionInfo(bundleset.getBundlableNode().root());
 		
@@ -43,10 +43,10 @@ public class UsageTrackingRestPayloadBuilder
 		jsonMap.put("execution_duration", currentTimeMillis - bundlesetStartTime);
 		jsonMap.put("bundlable_node_type", bundleset.getBundlableNode().getClass().getSimpleName());
 		
-		return new Gson().toJson(jsonMap);
+		return jsonMap;
 	}
 
-	public static String commandPayload(BRJS brjs, String command)
+	public static Map<String,Object> commandPayload(BRJS brjs, String command)
 	{
 		Map<String,Object> jsonMap = getBasicVersionInfo(brjs);
 		
@@ -55,10 +55,10 @@ public class UsageTrackingRestPayloadBuilder
 //		long currentTimeMillis = System.currentTimeMillis();
 //		jsonMap.put("execution_duration", currentTimeMillis - bundlesetStartTime);
 		
-		return new Gson().toJson(jsonMap);
+		return jsonMap;
 	}
 
-	public static String newInstallPayload(BRJS brjs)
+	public static Map<String,Object> newInstallPayload(BRJS brjs)
 	{
 		Map<String,Object> jsonMap = getBasicVersionInfo(brjs);
 		
@@ -71,7 +71,7 @@ public class UsageTrackingRestPayloadBuilder
 //		long currentTimeMillis = System.currentTimeMillis();
 //		jsonMap.put("execution_duration", currentTimeMillis - bundlesetStartTime);
 		
-		return new Gson().toJson(jsonMap);
+		return jsonMap;
 	}
 
 }

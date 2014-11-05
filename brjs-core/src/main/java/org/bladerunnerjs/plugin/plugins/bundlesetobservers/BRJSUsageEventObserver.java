@@ -2,9 +2,10 @@ package org.bladerunnerjs.plugin.plugins.bundlesetobservers;
 
 import java.util.Map;
 
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.bladerunnerjs.model.BRJS;
 import org.bladerunnerjs.model.engine.Node;
 import org.bladerunnerjs.model.events.BundleSetCreatedEvent;
@@ -24,6 +25,8 @@ public class BRJSUsageEventObserver extends AbstractModelObserverPlugin implemen
 	
 	private BRJS brjs;
 	private long lastCreationStartTime;
+	private static String KEENIO_PROJECT_ID = "5452adc733e406748303ecb4";
+	private static String KEENIO_APP_KEY = "2788245138ec539bd1e5fbb7fbb9d015b700d0a1687eaca22cb60abf8ce9bcd3515d1a81b7400b0b3459ab796357dc8629192380b1fd9286667eb958eb68a2e3ae58ecaff480a7eca3a49f9bdad43c3f86cc6636ce5c43ac83038b867f91f7e4426c9006809a26113e2709d1f7fb524a";
 
 	@Override
 	public void setBRJS(BRJS brjs)
@@ -102,10 +105,10 @@ public class BRJSUsageEventObserver extends AbstractModelObserverPlugin implemen
 			try
 			{
 				String jsonBlob = new Gson().toJson(eventData);
-				HttpPost keenIOPost = new HttpPost("https://api.keen.io/3.0/projects/5452adc733e406748303ecb4/events/" + eventType + "?api_key=2788245138ec539bd1e5fbb7fbb9d015b700d0a1687eaca22cb60abf8ce9bcd3515d1a81b7400b0b3459ab796357dc8629192380b1fd9286667eb958eb68a2e3ae58ecaff480a7eca3a49f9bdad43c3f86cc6636ce5c43ac83038b867f91f7e4426c9006809a26113e2709d1f7fb524a");
+				HttpClient client = HttpClientBuilder.create().build();
+				HttpPost keenIOPost = new HttpPost("https://api.keen.io/3.0/projects/" + KEENIO_PROJECT_ID + "/events/" + eventType + "?api_key=" + KEENIO_APP_KEY);
 				keenIOPost.setHeader("Content-Type", "application/json");
 				keenIOPost.setEntity( new StringEntity(jsonBlob) );
-				DefaultHttpClient client = new DefaultHttpClient();
 				client.execute(keenIOPost);
 				
 				pusher.trigger(eventType, "new-stat", eventData);
